@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Hội Nghị Nhà Phân Phối Vĩnh Phú - PMT Group</title>
+  <title>Hội Nghị Nhà Phân Phối Minh Cầu - PMT Group</title>
 
   <script src="data.js"></script>
 
@@ -25,20 +25,24 @@
     (function () {
       var img = new Image();
       img.onload = function () {
-        var size = 64;
-        var canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        var ctx = canvas.getContext('2d');
-        // Tính tỉ lệ để logo vừa khít ô vuông (contain)
-        var scale = Math.min(size / img.width, size / img.height);
-        var w = img.width * scale;
-        var h = img.height * scale;
-        var x = (size - w) / 2;
-        var y = (size - h) / 2;
-        ctx.drawImage(img, x, y, w, h);
-        var link = document.getElementById('appFavicon');
-        if (link) link.href = canvas.toDataURL('image/png');
+        try {
+          var size = 64;
+          var canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          var ctx = canvas.getContext('2d');
+          // Tính tỉ lệ để logo vừa khít ô vuông (contain)
+          var scale = Math.min(size / img.width, size / img.height);
+          var w = img.width * scale;
+          var h = img.height * scale;
+          var x = (size - w) / 2;
+          var y = (size - h) / 2;
+          ctx.drawImage(img, x, y, w, h);
+          var link = document.getElementById('appFavicon');
+          if (link) link.href = canvas.toDataURL('image/png');
+        } catch (e) {
+          // Bỏ qua nếu chạy trực tiếp qua giao thức file://
+        }
       };
       img.src = 'logo PMT.png';
     })();
@@ -455,9 +459,9 @@
 
   <div id="tsparticles"></div>
 
-  <audio id="audioSpin" src="/audio/nhacnen.mp3" loop></audio>
-  <audio id="audioWin" src="/audio/tingting.mp3"></audio>
-  <audio id="audioFinal" src="/audio/nhaccongbogiai.mp3" loop></audio>
+  <audio id="audioSpin" src="audio/nhacnen.mp3" loop></audio>
+  <audio id="audioWin" src="audio/tingting.mp3"></audio>
+  <audio id="audioFinal" src="audio/nhaccongbogiai.mp3" loop></audio>
 
   <header class="app-header">
     <div class="lantern-left">✨</div>
@@ -555,7 +559,7 @@
             <div class="db-action-bar">
               <input type="text" id="dbSearchInput" class="db-search-input" placeholder="Tìm kiếm theo Mã quay hoặc Tên đại lý..." oninput="renderDatabaseTable()" />
               <span id="dbTotalCount" class="db-total-count">Tổng số: 0 khách</span>
-              <button class="btn-download-template" onclick="downloadExcelTemplate()">Tải file mẫu Excel</button>
+              <button class="btn-download-template" onclick="downloadExcelTemplate()">Xuất file Excel</button>
               <button class="btn-import-excel" onclick="triggerExcelImport()">Nhập từ Excel</button>
               <button class="btn-open-add-modal" onclick="openFormModalForAdd()">Thêm khách hàng</button>
               <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelImport(event)" />
@@ -692,11 +696,11 @@
 
 
       <div class="winner-info-area" id="winnerInfo">
-        <div class="winner-name">HỘI NGHỊ KHÁCH HÀNG<br>NHÀ PHÂN PHỐI VĨNH PHÚ</div>
+        <div class="winner-name">HỘI NGHỊ KHÁCH HÀNG<br>NHÀ PHÂN PHỐI MINH CẦU</div>
       </div>
 
       <p class="instruction-text" id="introDate">
-        Phú Thọ, ngày 02 tháng 08 năm 2026 - Đây là trong One
+        Thái Nguyên, ngày 28 tháng 08 năm 2026
       </p>
     </div>
 
@@ -748,6 +752,9 @@
     const _supabase = (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) 
       ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
       : null;
+
+    // Chiều cao mỗi ô số trong reel (170px khớp với CSS .reel-cell)
+    const CELL_HEIGHT = 170;
 
     let dbEmployees = {};
     let validCodes = [];
@@ -853,24 +860,43 @@
       tbody.innerHTML = html;
     }
 
-    // --- LOGIC NHẬP TỪ FILE EXCEL NÂNG CAO ---
-    function downloadExcelTemplate() {
-      const templateData = [
-        { "Mã quay thưởng": "001", "Tên Đại Lý / Khách Hàng": "Đại Lý Vĩnh Phúc" },
-        { "Mã quay thưởng": "002", "Tên Đại Lý / Khách Hàng": "Công Ty Kim Long" },
-        { "Mã quay thưởng": "003", "Tên Đại Lý / Khách Hàng": "Đại Lý Quyến Thẩm" },
-        { "Mã quay thưởng": "004", "Tên Đại Lý / Khách Hàng": "Đại Lý Sơn Dương" }
-      ];
+    // --- XUẤT DỮ LIỆU EXCEL TỪ SUPABASE ---
+    async function downloadExcelTemplate() {
+      try {
+        let exportData = [];
+        if (rawSupabaseList && rawSupabaseList.length > 0) {
+          exportData = rawSupabaseList.map(row => ({
+            "Mã quay thưởng": String(row.ma_quay ?? row.code ?? '').padStart(3, '0'),
+            "Tên Đại Lý / Khách Hàng": row.ten_dai_ly ?? row.name ?? ''
+          }));
+        } else if (_supabase) {
+          const { data, error } = await _supabase.from('khach_moi').select('*').order('id', { ascending: true });
+          if (!error && data && data.length > 0) {
+            exportData = data.map(row => ({
+              "Mã quay thưởng": String(row.ma_quay ?? row.code ?? '').padStart(3, '0'),
+              "Tên Đại Lý / Khách Hàng": row.ten_dai_ly ?? row.name ?? ''
+            }));
+          }
+        }
 
-      const worksheet = XLSX.utils.json_to_sheet(templateData);
-      worksheet['!cols'] = [
-        { wch: 20 },
-        { wch: 45 }
-      ];
+        if (exportData.length === 0) {
+          alert("Không có dữ liệu khách hàng nào trong Supabase để xuất file Excel!");
+          return;
+        }
 
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachKhachHang");
-      XLSX.writeFile(workbook, "Mau_Danh_Sach_Khach_Hang_Quay_Thuong.xlsx");
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        worksheet['!cols'] = [
+          { wch: 20 },
+          { wch: 45 }
+        ];
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachKhachHang");
+        XLSX.writeFile(workbook, "Danh_Sach_Khach_Hang_Supabase.xlsx");
+      } catch (err) {
+        console.error("Lỗi xuất Excel từ Supabase:", err);
+        alert("⚠️ Lỗi xuất dữ liệu: " + err.message);
+      }
     }
 
     function triggerExcelImport() {
@@ -1057,15 +1083,14 @@
 
       try {
         if (!_supabase || SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
-          console.warn("Chưa cấu hình Supabase URL/KEY. Đang đọc dữ liệu từ file Excel làm phương án dự phòng...");
-          await loadDataFromExcel();
-          return;
+          throw new Error("Chưa cấu hình Supabase URL hoặc Anon Key!");
         }
 
         // Đọc dữ liệu từ bảng 'khach_moi' trên Supabase
         const { data, error } = await _supabase
           .from('khach_moi')
-          .select('*');
+          .select('*')
+          .order('id', { ascending: true });
 
         if (error) throw error;
 
@@ -1096,9 +1121,13 @@
             }
 
             if (code != null) {
+              let codeStr = String(code).trim();
+              if (/^\d+$/.test(codeStr)) {
+                codeStr = codeStr.padStart(3, '0');
+              }
               const nameStr = String(agencyName || '').trim();
               DANH_SACH_NHAN_VIEN.push({
-                code: String(code).padStart(3, '0'),
+                code: codeStr,
                 name: nameStr,
                 pos: nameStr,
                 status: row.status ?? 1
@@ -1108,69 +1137,12 @@
         }
       } catch (error) {
         console.error("Lỗi đọc dữ liệu từ Supabase:", error);
-        alert("⚠️ Lỗi kết nối Supabase: " + error.message + "\n\nĐang tự động chuyển sang đọc file Excel...");
-        await loadDataFromExcel();
-        return;
+        alert("⚠️ Lỗi đọc dữ liệu từ Supabase: " + error.message);
       } finally {
         if (DANH_SACH_NHAN_VIEN.length === 0) {
-          alert("⚠️ KHÔNG CÓ DỮ LIỆU:\n\nKhông có dữ liệu khách hàng nào từ Supabase hoặc file Excel!");
+          console.warn("Chưa có dữ liệu khách hàng nào trong bảng 'khach_moi' trên Supabase!");
         }
         loadDataFromJS(); // Khởi tạo danh sách quay thưởng
-      }
-    }
-
-    // ⭐ TỰ ĐỘNG ĐỌC EXCEL TRONG THƯ MỤC (DỰ PHÒNG)
-    async function loadDataFromExcel() {
-      // BƯỚC 1: Xóa sạch danh sách mẫu (Khách hàng 0001->0200) được sinh tự động ở data.js
-      DANH_SACH_NHAN_VIEN.length = 0;
-
-      try {
-        // Bỏ cache để luôn lấy file excel mới nhất khi F5
-        const url = 'danhsachkhachmoi.xlsx?t=' + new Date().getTime();
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Không tải được file Excel");
-
-        const arrayBuffer = await response.arrayBuffer();
-        const data = new Uint8Array(arrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-        if (jsonData.length > 0) {
-          jsonData.forEach(row => {
-            let code = row['Mã quay thưởng'];
-            let agencyName = row['Tên đại lý'] || row['Tên Đại Lý'] || row['Ten dai ly'] || row['Ten Dai Ly'] || row['Tên đại lý / Khách hàng'] || row['Tên khách hàng'] || row['Tên'] || row['Đại lý'] || '';
-
-            for (let key in row) {
-              const cleanKey = key.trim().toLowerCase();
-              if (code == null && (cleanKey.includes('mã') || cleanKey.includes('code'))) {
-                code = row[key];
-              }
-              if (!agencyName && (cleanKey.includes('tên') || cleanKey.includes('đại lý') || cleanKey.includes('dai ly') || cleanKey.includes('khách') || cleanKey.includes('đơn vị'))) {
-                agencyName = row[key];
-              }
-            }
-
-            if (code != null) {
-              const nameStr = String(agencyName || '').trim();
-              DANH_SACH_NHAN_VIEN.push({
-                code: String(code).padStart(3, '0'),
-                name: nameStr,
-                pos: nameStr,
-                status: 1
-              });
-            }
-          });
-        }
-      } catch (error) {
-        console.warn("Lỗi đọc Excel:", error);
-      } finally {
-        // BƯỚC 2: Kiểm tra lại. Nếu không có ai thì báo lỗi rõ ràng.
-        if (DANH_SACH_NHAN_VIEN.length === 0) {
-          alert("⚠️ LỖI NGHIÊM TRỌNG:\n\nKhông thể đọc được danh sách từ Excel.\nHãy đảm bảo:\n1. Tên file đúng là: danhsachkhachmoi.xlsx\n2. File Excel nằm cùng thư mục với index.html\n3. Mở file HTML qua công cụ Live Server (không click đúp).");
-        }
-        loadDataFromJS(); // Khởi tạo app sau khi đã có dữ liệu
       }
     }
 
@@ -1346,57 +1318,67 @@
       btn.disabled = true;
       btn.style.opacity = "0";
 
-      for (let i = 0; i < batchWinners.length; i++) {
-        const winner = batchWinners[i];
-        let chars = String(winner.code).split("");
-        while (chars.length < 3) chars.unshift("0");
+      try {
+        for (let i = 0; i < batchWinners.length; i++) {
+          const winner = batchWinners[i];
+          let chars = String(winner.code).split("");
+          while (chars.length < 3) chars.unshift("0");
 
-        let currentPrizeCount = allWinners.filter(w => w.prize === prizeId).length;
-        let totalPrizeCount = CONFIG_GIAI_THUONG[prizeId].count;
+          let currentPrizeCount = allWinners.filter(w => w.prize === prizeId).length;
+          let totalPrizeCount = CONFIG_GIAI_THUONG[prizeId].count;
 
-        document.getElementById("winnerInfo").innerHTML =
-          `<div class="winner-name" style="opacity:0.8; font-size: 2rem;">ĐANG QUAY NGƯỜI THỨ ${currentPrizeCount + 1}/${totalPrizeCount}...</div>`;
+          document.getElementById("winnerInfo").innerHTML =
+            `<div class="winner-name" style="opacity:0.8; font-size: 2rem;">ĐANG QUAY NGƯỜI THỨ ${currentPrizeCount + 1}/${totalPrizeCount}...</div>`;
 
-        const audioSpin = document.getElementById("audioSpin");
-        audioSpin.play().catch(() => { });
-
-        await spinAllReelsSequential(chars, prizeId);
-
-        audioSpin.pause();  // ✅ Tạm dừng nhạc nền (KHÔNG reset)
-        const audioWin = document.getElementById("audioWin");
-        audioWin.currentTime = 0;  // ✅ Nhạc tingting thì reset về đầu mỗi lần
-        audioWin.play().catch(() => { });
-
-        // ✅ THÊM CODE: Sau khi tingting kết thúc, phát lại nhạc nền
-        audioWin.onended = function () {
+          const audioSpin = document.getElementById("audioSpin");
           audioSpin.play().catch(() => { });
-        };
 
-        const agencyName = winner.name || winner.pos || '';
-        const nameHtml = agencyName ? `<div class="winner-detail" style="font-size: 2.8rem; color: #ffffff; font-weight: 900; text-shadow: 0 4px 16px rgba(0,0,0,0.8); margin-top: 10px;">${agencyName}</div>` : '';
-        document.getElementById("winnerInfo").innerHTML = `
-            <div class="winner-name" style="color:#FFD700; font-size: 5rem; white-space: nowrap; max-width: 100%; width: 100%;">Mã: ${winner.code}</div>
-            ${nameHtml}
-        `;
+          await spinAllReelsSequential(chars, prizeId);
 
-        allWinners.push(winner);
-        renderHistory();
+          audioSpin.pause();  // ✅ Tạm dừng nhạc nền (KHÔNG reset)
+          const audioWin = document.getElementById("audioWin");
+          audioWin.currentTime = 0;  // ✅ Nhạc tingting thì reset về đầu mỗi lần
+          audioWin.play().catch(() => { });
 
-        // ⭐ BẮT ĐẦU CHU KỲ QUAY MỚI NGAY SAU KHI HIỂN THỊ TÊN (nếu chưa phải người cuối)
+          // ✅ THÊM CODE: Sau khi tingting kết thúc, phát lại nhạc nền
+          audioWin.onended = function () {
+            audioSpin.play().catch(() => { });
+          };
+
+          const agencyName = winner.name || winner.pos || '';
+          const nameHtml = agencyName ? `<div class="winner-detail" style="font-size: 2.8rem; color: #ffffff; font-weight: 900; text-shadow: 0 4px 16px rgba(0,0,0,0.8); margin-top: 10px;">${agencyName}</div>` : '';
+          document.getElementById("winnerInfo").innerHTML = `
+              <div class="winner-name" style="color:#FFD700; font-size: 5rem; white-space: nowrap; max-width: 100%; width: 100%;">Mã: ${winner.code}</div>
+              ${nameHtml}
+          `;
+
+          allWinners.push(winner);
+          renderHistory();
+
+          // ⭐ BẮT ĐẦU CHU KỲ QUAY MỚI NGAY SAU KHI HIỂN THỊ TÊN (nếu chưa phải người cuối)
 
 
-        await new Promise((r) => setTimeout(r, 3000));
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+
+        if (quantity > 1) {
+          showBatchPopup(batchWinners, batchData.label);
+        } else {
+          // Lấy tên giải từ CONFIG_GIAI_THUONG
+          const prizeName = CONFIG_GIAI_THUONG[batchWinners[0].prize].name;
+          showBatchPopup(batchWinners, `CHÚC MỪNG TRÚNG ${prizeName}`);
+        }
+      } catch (err) {
+        console.error("Lỗi trong quá trình quay thưởng:", err);
+        alert("Có lỗi xảy ra khi quay thưởng: " + err.message);
+      } finally {
+        isSpinning = false;
+        const modal = document.getElementById("finalScreen");
+        if (!modal || !modal.classList.contains("active")) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
       }
-
-      if (quantity > 1) {
-        showBatchPopup(batchWinners, batchData.label);
-      } else {
-        // Lấy tên giải từ CONFIG_GIAI_THUONG
-        const prizeName = CONFIG_GIAI_THUONG[batchWinners[0].prize].name;
-        showBatchPopup(batchWinners, `CHÚC MỪNG TRÚNG ${prizeName}`);
-      }
-
-      isSpinning = false;
     }
 
     // ⭐ HÀM QUAY CŨ (CHO CÁC GIẢI THƯỜNG)
@@ -1545,7 +1527,9 @@
       // ✅ Lưu lại danh sách người trúng để phím R có thể truy cập
       currentPopupWinners = winnersList;
 
-      // ✅ THÊM: Tắt nhạc nền khi hiển thị popup
+      // ✅ THÊM: Tắt nhạc nền và hủy callback onended của nhạc win khi hiển thị popup
+      const audioWin = document.getElementById("audioWin");
+      if (audioWin) audioWin.onended = null;
       const audioSpin = document.getElementById("audioSpin");
       if (audioSpin) audioSpin.pause();
 
@@ -1680,52 +1664,65 @@
       if (availableCandidates.length === 0) {
         alert("Hết đại lý để quay bù!");
         isSpinning = false;
+        btn.disabled = false;
+        btn.style.opacity = "1";
         return;
       }
 
-      const randomBuffer = new Uint32Array(1);
-      window.crypto.getRandomValues(randomBuffer);
-      const randomIndex = randomBuffer[0] % availableCandidates.length;
-      const newCandidateCode = availableCandidates[randomIndex];
-      const newEmp = dbEmployees[newCandidateCode];
+      try {
+        const randomBuffer = new Uint32Array(1);
+        window.crypto.getRandomValues(randomBuffer);
+        const randomIndex = randomBuffer[0] % availableCandidates.length;
+        const newCandidateCode = availableCandidates[randomIndex];
+        const newEmp = dbEmployees[newCandidateCode];
 
-      usedCodes.push(newCandidateCode);
-      const newWinner = { prize: prizeId, code: newCandidateCode, pos: newEmp.pos };
+        usedCodes.push(newCandidateCode);
+        const newWinner = { prize: prizeId, code: newCandidateCode, pos: newEmp ? newEmp.pos : 'Đại lý' };
 
-      let chars = String(newCandidateCode).split("");
-      while (chars.length < 3) chars.unshift("0");
+        let chars = String(newCandidateCode).split("");
+        while (chars.length < 3) chars.unshift("0");
 
-      document.getElementById("winnerInfo").innerHTML = `<div class="winner-name" style="opacity:0.8; font-size: 2rem;">ĐANG QUAY BÙ...</div>`;
-      const audioSpin = document.getElementById("audioSpin");
-      if (audioSpin.paused) audioSpin.play().catch(() => { });
+        document.getElementById("winnerInfo").innerHTML = `<div class="winner-name" style="opacity:0.8; font-size: 2rem;">ĐANG QUAY BÙ...</div>`;
+        const audioSpin = document.getElementById("audioSpin");
+        if (audioSpin.paused) audioSpin.play().catch(() => { });
 
-      await spinAllReelsSequential(chars, prizeId);
+        await spinAllReelsSequential(chars, prizeId);
 
-      audioSpin.pause();
-      const audioWin = document.getElementById("audioWin");
-      audioWin.currentTime = 0;
-      audioWin.play().catch(() => { });
-      audioWin.onended = function () {
-        audioSpin.play().catch(() => { });
-      };
+        audioSpin.pause();
+        const audioWin = document.getElementById("audioWin");
+        audioWin.currentTime = 0;
+        audioWin.play().catch(() => { });
+        audioWin.onended = function () {
+          audioSpin.play().catch(() => { });
+        };
 
-      const redrawAgencyName = newWinner.name || newWinner.pos || '';
-      const redrawNameHtml = redrawAgencyName ? `<div class="winner-detail" style="font-size: 2.8rem; color: #ffffff; font-weight: 900; text-shadow: 0 4px 16px rgba(0,0,0,0.8); margin-top: 10px;">${redrawAgencyName}</div>` : '';
-      document.getElementById("winnerInfo").innerHTML = `
-            <div class="winner-name" style="color:#FFD700; font-size: 5rem; white-space: nowrap; max-width: 100%; width: 100%;">Mã: ${newWinner.code}</div>
-            ${redrawNameHtml}
-        `;
+        const redrawAgencyName = newWinner.name || newWinner.pos || '';
+        const redrawNameHtml = redrawAgencyName ? `<div class="winner-detail" style="font-size: 2.8rem; color: #ffffff; font-weight: 900; text-shadow: 0 4px 16px rgba(0,0,0,0.8); margin-top: 10px;">${redrawAgencyName}</div>` : '';
+        document.getElementById("winnerInfo").innerHTML = `
+              <div class="winner-name" style="color:#FFD700; font-size: 5rem; white-space: nowrap; max-width: 100%; width: 100%;">Mã: ${newWinner.code}</div>
+              ${redrawNameHtml}
+          `;
 
-      allWinners.push(newWinner);
-      renderHistory();
-      isSpinning = false;
+        allWinners.push(newWinner);
+        renderHistory();
 
-      await new Promise(r => setTimeout(r, 3000));
+        await new Promise(r => setTimeout(r, 3000));
 
-      const currentBatchData = KICH_BAN_QUAY[currentBatchIndex];
-      const quantity = currentBatchData.count;
-      const recentWinners = allWinners.slice(-quantity);
-      showBatchPopup(recentWinners, currentBatchData.label);
+        const currentBatchData = KICH_BAN_QUAY[currentBatchIndex];
+        const quantity = currentBatchData.count;
+        const recentWinners = allWinners.slice(-quantity);
+        showBatchPopup(recentWinners, currentBatchData.label);
+      } catch (err) {
+        console.error("Lỗi khi quay bù:", err);
+        alert("Có lỗi xảy ra khi quay bù: " + err.message);
+      } finally {
+        isSpinning = false;
+        const modal = document.getElementById("finalScreen");
+        if (!modal || !modal.classList.contains("active")) {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+        }
+      }
     }
 
     function handleFinalBtnClick() {
@@ -2001,7 +1998,7 @@
       pendingRedrawPrize = null;
       document.getElementById("historyList").innerHTML = "";
       document.getElementById("finalScreen").classList.remove("active");
-      loadDataFromExcel();
+      loadDataFromSupabase();
       closeConfirmModal();
     }
 

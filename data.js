@@ -19,15 +19,6 @@ const KICH_BAN_QUAY = [
 ];
 
 
-// --- 2. DANH SÁCH NHÂN VIÊN ---
-// Đoạn code tự động tạo danh sách 200 khách hàng từ 0001 đến 0200
+// --- 2. DANH SÁCH KHÁCH MỜI / ĐẠI LÝ ---
+// Dữ liệu sẽ được tải trực tiếp từ Supabase (bảng 'khach_moi')
 const DANH_SACH_NHAN_VIEN = [];
-for (let i = 1; i <= 200; i++) {
-    // padStart sẽ đảm bảo số có 3 chữ số, VD: 1 -> "001", 45 -> "045"
-    let codeStr = String(i).padStart(3, '0');
-    DANH_SACH_NHAN_VIEN.push({
-        code: codeStr,
-        pos: 'Đại lý',
-        status: 1
-    });
-}

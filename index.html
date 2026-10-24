@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Hội Nghị Nhà Phân Phối Minh Cầu - PMT Group</title>
 
+  <script src="led-config.js"></script>
   <script src="data.js"></script>
   <script src="tocdoquay.js"></script>
 
@@ -48,8 +49,7 @@
       img.src = 'logo PMT.png';
     })();
   </script>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=14" />
   <link
     href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Montserrat:wght@700;800;900&family=Roboto:wght@400;500;700&display=swap"
     rel="stylesheet" />
@@ -708,7 +708,7 @@
 
 
     <div class="tet-panel sidebar">
-      <div class="sidebar-header">
+      <div class="sidebar-header" onclick="testShowSummary()" style="cursor: pointer;" title="Bấm để xem Bảng Tổng Kết (hoặc phím số 3)">
         <h3>DANH SÁCH TRÚNG GIẢI</h3>
       </div>
 
@@ -1751,6 +1751,26 @@
       return colorMap[prizeId] || 'prize-color-default';
     }
 
+    function testShowSummary() {
+      if (!allWinners || allWinners.length === 0) {
+        allWinners = [
+          { prize: 1, code: '296', name: 'CH: Phương Nhạ - xxxxxx4616' },
+          { prize: 2, code: '068', name: 'CH: Cường Dung - xxxxxx0507' },
+          { prize: 2, code: '295', name: 'CH: Huy Hằng - xxxxxx8988' },
+          { prize: 3, code: '081', name: 'CH: Kim Sơn - xxxxxx0291' },
+          { prize: 3, code: '092', name: 'Anh Thiệp - xxxxxx2988' },
+          { prize: 3, code: '215', name: 'CH: Trường Giang - xxxxxx1997' },
+          { prize: 4, code: '042', name: 'CH: Thành Huyền - xxxxxx8978' },
+          { prize: 4, code: '213', name: 'CH: Huy Hoàng nhiên - xxxxxx8113' },
+          { prize: 4, code: '277', name: 'CH: Hiếu Bình - xxxxxx0753' },
+          { prize: 4, code: '065', name: 'CH: Đức Anh - xxxxxx1331' },
+          { prize: 4, code: '089', name: 'CH: Hải Hường - xxxxxx9856' },
+          { prize: 4, code: '221', name: 'CH: Tấn Thúy - xxxxxx4467' }
+        ];
+      }
+      showSummaryModal("final");
+    }
+
     // ⭐ HÀM HIỂN THỊ TỔNG KẾT – PHONG CÁCH ĐỎ/TRẮNG, ĐỦ 4 GIẢI (KHÔNG CẦN QUAY LẠI)
     function showSummaryModal(type) {
       const modal = document.getElementById("finalScreen");
@@ -1777,6 +1797,9 @@
 
       const finalBtnGroup = document.getElementById("finalBtnGroup");
       if (finalBtnGroup) finalBtnGroup.style.display = "none";
+
+      const spinBtnWrapper = document.getElementById("spinBtnWrapper");
+      if (spinBtnWrapper) spinBtnWrapper.style.display = "none";
 
       document.getElementById("finalBtn").setAttribute("data-final", "true");
 
@@ -2030,6 +2053,8 @@
       pendingRedrawPrize = null;
       document.getElementById("historyList").innerHTML = "";
       document.getElementById("finalScreen").classList.remove("active");
+      const spinBtnWrapper = document.getElementById("spinBtnWrapper");
+      if (spinBtnWrapper) spinBtnWrapper.style.display = "";
       loadDataFromSupabase();
       closeConfirmModal();
     }
@@ -2069,6 +2094,12 @@
       if (event.key === '2') {
         event.preventDefault();
         hideAwardThumb();
+        return;
+      }
+      // ⭐ PHÍM 3 hoặc s: Mở/xem trước Bảng Tổng Kết Danh Sách Trúng Giải
+      if (event.key === '3' || event.key === 's' || event.key === 'S') {
+        event.preventDefault();
+        testShowSummary();
         return;
       }
       // ⭐ PHÍM R hoặc ArrowLeft (nút Back slide trên clicker): Quay bù (vắng mặt)

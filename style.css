@@ -547,106 +547,127 @@ body {
   50%       { transform: translateY(-5px); }
 }
 
+/* ===== ALL PRIZE CARD - MÀN HÌNH TRÁI TỔNG KẾT (PHONG CÁCH NỀN TRẮNG CHỮ ĐỎ ĐỒNG BỘ) ===== */
 .all-prize-card {
-  background: linear-gradient(160deg, rgba(110,0,0,0.92) 0%, rgba(50,0,0,0.97) 100%);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 22px;
+  background: linear-gradient(135deg, #ffffff 0%, #fffdf8 100%);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: slideInLeft 0.5s ease-out both, cardGlow 3s ease-in-out infinite;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: slideInLeft 0.5s ease-out both;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 6px solid var(--tet-red-bright, #dc2626);
 }
 
 .all-prize-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 36px rgba(0,0,0,0.55), 0 0 28px rgba(255,215,0,0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
 }
 
-/* Header: dải màu chứa tên giải */
+/* Header: chứa Pill Badge tên giải */
 .apc-header {
-  padding: 12px 14px 11px;
+  padding: 8px 10px 4px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(80,0,0,0.2) 100%);
-  border-bottom: 1px solid rgba(255,255,255,0.15);
-  position: relative;
-  overflow: hidden;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.apc-header::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -60%;
-  width: 40%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  animation: shimmerBadge 3s linear infinite;
-}
-
-/* Tên giải – to, rõ, nổi bật trên màn LED */
+/* Tên giải – Pill Badge đỏ bo tròn đồng bộ với .h-badge bên cột phải */
 .apc-prize-name {
   font-family: 'Montserrat', sans-serif !important;
-  font-size: 1.8rem !important;
-  font-weight: 900 !important;
-  letter-spacing: 2px;
-  padding: 8px 30px !important;
-  border-radius: 50px !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.8px;
+  padding: 4px 14px !important;
+  border-radius: 20px !important;
   display: inline-block !important;
   text-transform: uppercase;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff3b30, #b71c1c) !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 0 2px 6px rgba(183, 28, 28, 0.3) !important;
 }
 
-/* Container ảnh – nền tối, căn giữa */
+/* Phân loại viền và badge theo từng cấp giải */
+.all-prize-card.prize-tier-1 {
+  border-left: 7px solid #FFD700;
+  border: 1.5px solid #FFD700;
+  border-left-width: 7px;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+}
+.all-prize-card.prize-tier-1 .apc-prize-name {
+  background: linear-gradient(135deg, #b71c1c, #7f1d1d) !important;
+  color: #FFD700 !important;
+  border: 1.5px solid #FFD700 !important;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4) !important;
+}
+
+.all-prize-card.prize-tier-2 {
+  border-left: 6px solid #e11d48;
+}
+.all-prize-card.prize-tier-2 .apc-prize-name {
+  background: linear-gradient(135deg, #e11d48, #be123c) !important;
+}
+
+.all-prize-card.prize-tier-3 {
+  border-left: 6px solid #dc2626;
+}
+.all-prize-card.prize-tier-3 .apc-prize-name {
+  background: linear-gradient(135deg, #ff3b30, #b71c1c) !important;
+}
+
+.all-prize-card.prize-tier-4 {
+  border-left: 5px solid #ea580c;
+}
+.all-prize-card.prize-tier-4 .apc-prize-name {
+  background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+}
+
+/* Container ảnh – Nền trắng tinh khôi, sạch đẹp */
 .apc-img-wrap {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #1a0000 0%, #2e0000 100%);
-  padding: 16px 12px;
-  position: relative;
-}
-
-.apc-img-wrap::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center bottom, rgba(255,100,0,0.08) 0%, transparent 70%);
-  pointer-events: none;
+  background: #ffffff;
+  padding: 6px 10px;
+  box-sizing: border-box;
 }
 
 .apc-img {
   max-width: 90%;
-  max-height: 180px;
-  height: 180px;
+  max-height: 80px;
+  height: 80px;
   width: auto;
   display: block;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  animation: floatImg 4s ease-in-out infinite;
-  transition: transform 0.3s ease;
-  position: relative;
-  z-index: 1;
+  border-radius: 6px;
   object-fit: contain;
+  transition: transform 0.25s ease;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.1));
 }
 
 .all-prize-card:hover .apc-img {
-  transform: scale(1.07);
-  animation-play-state: paused;
+  transform: scale(1.05);
 }
 
-/* Tên giải thưởng (chi tiết sản phẩm) – Chữ to, đậm, rõ nét */
+/* Tên chi tiết phần thưởng – NỀN TRẮNG CHỮ ĐỎ ĐẬM */
 .apc-detail {
-  color: #FFFFFF;
-  font-size: 1.35rem;
+  color: var(--tet-red-deep, #b71c1c);
+  font-family: 'Montserrat', 'Google Sans', sans-serif;
+  font-size: 0.95rem;
   font-weight: 800;
   text-align: center;
-  padding: 12px 16px 14px;
-  letter-spacing: 0.5px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
-  border-top: 1px solid rgba(255,255,255,0.15);
-  font-style: normal;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  padding: 6px 10px 8px;
+  letter-spacing: 0.3px;
+  background: #ffffff;
+  border-top: 1px dashed rgba(183, 28, 28, 0.2);
+  line-height: 1.25;
 }
 
 
@@ -1357,14 +1378,15 @@ body {
   width: 98%;
   max-width: 1720px;
   height: auto;
-  max-height: var(--led-summary-height, 55vh);
+  max-height: var(--led-summary-height, 72vh);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(50, 6, 12, 0.95) 0%, rgba(20, 2, 5, 0.98) 100%);
-  border: 2px solid rgba(255, 215, 0, 0.45);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(255, 215, 0, 0.06);
+  background: linear-gradient(135deg, rgba(88, 10, 18, 0.94) 0%, rgba(46, 5, 10, 0.97) 100%);
+  border: 2px solid rgba(255, 215, 0, 0.55);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(255, 215, 0, 0.08);
   border-radius: 16px;
+  box-sizing: border-box;
 }
 
 .final-table-container.three-column-layout .final-table {
@@ -1376,7 +1398,7 @@ body {
   flex: 1;
   width: 100%;
   height: 100%;
-  padding: 8px 12px;
+  padding: 10px 14px;
   box-sizing: border-box;
   overflow-y: auto;
 }
@@ -2278,40 +2300,48 @@ body {
 }
 
 /* =====================================================
-   DANH SÁCH TRÚNG GIẢI TỔNG KẾT – LAYOUT 3 CỘT x 4 DÒNG
+   BỐ CỤC PHÂN TẦNG SÂN KHẤU – TỔNG KẾT 16 GIẢI THƯỞNG
+   (TRẢI TỪ TRÊN XUỐNG DƯỚI, TỪ TRÁI QUA PHẢI, 0% ICON)
    ===================================================== */
 
-.winners-grid-3x4 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 8px 12px;
-  width: 100%;
-  height: 100%;
-}
-
-.winner-grid-card {
+.summary-stage-grid {
   display: flex;
   flex-direction: column;
-  border-radius: 11px;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.stage-tier-row {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Thẻ giải thưởng sân khấu: Tối giản, sang trọng, tương phản cao, không icon/emoji */
+.stage-award-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 9px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.45);
-  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.25s ease;
-  animation: cardGridPopIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) both;
-  background: #ffffff;
-  position: relative;
+  background: rgba(22, 3, 7, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s ease;
+  animation: stageCardFadeIn 0.35s ease-out both;
+  box-sizing: border-box;
 }
 
-.winner-grid-card:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
-  z-index: 5;
+.stage-award-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75);
 }
 
-@keyframes cardGridPopIn {
+@keyframes stageCardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.96);
+    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -2319,303 +2349,240 @@ body {
   }
 }
 
-/* Header của mỗi thẻ */
-.wgc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 12px;
-  color: #ffffff;
-  font-family: 'Montserrat', sans-serif;
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-  flex-shrink: 0;
-}
-
-.wgc-header::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -80%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
-  animation: shimmerBadge 3.5s linear infinite;
-}
-
-.wgc-prize-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.88rem;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-
-.wgc-icon {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-.wgc-prize-badge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 10px;
-  background: rgba(0, 0, 0, 0.26);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  max-width: 58%;
-  backdrop-filter: blur(4px);
-}
-
-.wgc-gift-icon {
-  font-size: 0.78rem;
-  line-height: 1;
-}
-
-.wgc-prize-detail {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* Thân thẻ (Nền ngọc trai / trắng sứ cao cấp, tương phản sắc nét) */
-.wgc-body {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  gap: 10px;
-  flex: 1;
-  background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
-  position: relative;
-  box-sizing: border-box;
-}
-
-/* STT */
-.wgc-stt-badge {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 900;
-  padding: 3px 6px;
-  border-radius: 6px;
-  flex-shrink: 0;
-  letter-spacing: 0.5px;
-}
-
-/* Khung Mã Quay Số (Nổi bật, phong cách vé số may mắn / ticket) */
-.wgc-code-box {
+/* Thẻ giải thưởng sân khấu: Phong cách Thẻ Trắng Sứ / Đỏ Tết sang trọng (Đồng bộ với Popup & Lịch Sử) */
+.stage-award-card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #fffdf5 100%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  padding: 10px 14px;
+  box-sizing: border-box;
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s ease;
+  animation: stageCardFadeIn 0.35s ease-out both;
+}
+
+.stage-award-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Hàng trên: Mã quay + Huy hiệu viên thuốc (Pill Badge) */
+.sac-top-row {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 4px 10px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  min-width: 78px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+  gap: 8px;
 }
 
-.wgc-code-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin-bottom: 1px;
-  opacity: 0.85;
-}
-
-.wgc-code-val {
+.sac-code {
   font-family: 'Montserrat', sans-serif;
   font-size: 1.45rem;
   font-weight: 900;
-  letter-spacing: 0.8px;
-  line-height: 1;
+  color: var(--tet-red-deep, #b71c1c);
+  letter-spacing: 0.5px;
+  line-height: 1.1;
 }
 
-/* Divider phân cách */
-.wgc-divider {
-  width: 1.5px;
-  height: 55%;
-  background: rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-/* Khung tên và thông tin khách hàng */
-.wgc-info-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1;
-  min-width: 0;
-  gap: 3px;
-}
-
-.wgc-main-name {
+/* Huy hiệu viên thuốc (Pill Badge) bo tròn đồng bộ với .h-badge bên Lịch sử */
+.sac-pill-badge {
   font-family: 'Montserrat', sans-serif;
-  font-size: 1.05rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  color: #0f172a;
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
 
-.wgc-phone-badge {
-  display: inline-flex;
+/* Hàng giữa: Tên Đại Lý / Khách Hàng */
+.sac-name {
+  font-family: 'Montserrat', 'Google Sans', sans-serif;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 4px 0 6px;
+}
+
+/* Hàng dưới: Quà tặng & Số điện thoại */
+.sac-bottom-row {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 4px;
-  align-self: flex-start;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.75rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  padding-top: 4px;
+  gap: 6px;
+}
+
+.sac-gift {
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 5px;
-  background: rgba(15, 23, 42, 0.06);
-  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;
 }
 
-/* --- Phân cấp màu theo Cấp Giải --- */
+.sac-phone {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
 
-/* 1. GIẢI ĐẶC BIỆT (Hoàng kim rực rỡ) */
-.winner-grid-card.prize-tier-1 {
+/* =====================================================
+   CHI TIẾT PHÂN CẤP TỪNG HẠNG GIẢI (THEO THỨ BẬC)
+   ===================================================== */
+
+/* --- HÀNG 1: GIẢI ĐẶC BIỆT & GIẢI NHẤT (Row Hero) --- */
+.stage-tier-row.row-hero {
+  gap: 12px;
+}
+.stage-tier-row.row-hero .stage-award-card {
+  min-height: 98px;
+  padding: 12px 16px;
+}
+
+/* 👑 CẤP 1: GIẢI ĐẶC BIỆT (Vàng Hoàng Gia) */
+.stage-award-card.tier-1 {
+  border-left: 8px solid #FFD700;
   border: 2px solid #FFD700;
-  box-shadow: 0 0 24px rgba(255, 215, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-left-width: 8px;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+  box-shadow: 0 0 22px rgba(255, 215, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.3);
 }
-.winner-grid-card.prize-tier-1 .wgc-header {
-  background: linear-gradient(135deg, #78350f 0%, #b45309 35%, #d97706 75%, #f59e0b 100%);
-  color: #FFFBEB;
-  border-bottom: 2px solid #FFD700;
+.stage-award-card.tier-1 .sac-code {
+  font-size: 1.65rem;
+  color: #b71c1c;
 }
-.winner-grid-card.prize-tier-1 .wgc-header .wgc-prize-name {
+.stage-award-card.tier-1 .sac-pill-badge {
+  background: linear-gradient(135deg, #b71c1c, #7f1d1d);
   color: #FFD700;
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+  border: 1.5px solid #FFD700;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
-.winner-grid-card.prize-tier-1 .wgc-body {
-  background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+.stage-award-card.tier-1 .sac-name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
 }
-.winner-grid-card.prize-tier-1 .wgc-stt-badge {
-  background: linear-gradient(135deg, #FFD700, #d97706);
-  color: #451a03;
-  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
-}
-.winner-grid-card.prize-tier-1 .wgc-code-box {
-  background: rgba(217, 119, 6, 0.09);
-  border: 1.5px solid rgba(217, 119, 6, 0.35);
-}
-.winner-grid-card.prize-tier-1 .wgc-code-label {
-  color: #92400e;
-}
-.winner-grid-card.prize-tier-1 .wgc-code-val {
+.stage-award-card.tier-1 .sac-gift {
   color: #b45309;
-}
-.winner-grid-card.prize-tier-1 .wgc-phone-badge {
-  background: rgba(217, 119, 6, 0.12);
-  color: #92400e;
+  font-weight: 800;
+  font-size: 0.88rem;
 }
 
-/* 2. GIẢI NHẤT (Đỏ Ruby kim cương) */
-.winner-grid-card.prize-tier-2 {
-  border: 1.5px solid #ef4444;
-  box-shadow: 0 6px 22px rgba(239, 68, 68, 0.35);
+/* 🥇 CẤP 2: GIẢI NHẤT (Đỏ Ruby Rượu Vang) */
+.stage-award-card.tier-2 {
+  border-left: 7px solid #e11d48;
+  border: 1.5px solid rgba(225, 29, 72, 0.35);
+  border-left-width: 7px;
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.22), 0 4px 12px rgba(0, 0, 0, 0.18);
 }
-.winner-grid-card.prize-tier-2 .wgc-header {
-  background: linear-gradient(135deg, #880000 0%, #dc2626 60%, #b91c1c 100%);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.25);
+.stage-award-card.tier-2 .sac-code {
+  font-size: 1.5rem;
+  color: #b71c1c;
 }
-.winner-grid-card.prize-tier-2 .wgc-stt-badge {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
+.stage-award-card.tier-2 .sac-pill-badge {
+  background: linear-gradient(135deg, #e11d48, #be123c);
   color: #ffffff;
+  border: 1px solid #ffffff;
 }
-.winner-grid-card.prize-tier-2 .wgc-code-box {
-  background: rgba(220, 38, 38, 0.08);
+.stage-award-card.tier-2 .sac-name {
+  font-size: 1.15rem;
+}
+.stage-award-card.tier-2 .sac-gift {
+  color: #be123c;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+/* --- HÀNG 2: CÁC GIẢI NHÌ (Row Second) --- */
+.stage-tier-row.row-second {
+  gap: 10px;
+}
+.stage-tier-row.row-second .stage-award-card {
+  min-height: 90px;
+  padding: 10px 14px;
+}
+
+/* 🥈 CẤP 3: GIẢI NHÌ (Đỏ Đô Sáng) */
+.stage-award-card.tier-3 {
+  border-left: 6px solid #dc2626;
   border: 1.5px solid rgba(220, 38, 38, 0.3);
+  border-left-width: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.winner-grid-card.prize-tier-2 .wgc-code-label {
+.stage-award-card.tier-3 .sac-code {
+  font-size: 1.4rem;
+  color: #b71c1c;
+}
+.stage-award-card.tier-3 .sac-pill-badge {
+  background: linear-gradient(135deg, #ff3b30, #b71c1c);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+.stage-award-card.tier-3 .sac-name {
+  font-size: 1.1rem;
+}
+.stage-award-card.tier-3 .sac-gift {
   color: #991b1b;
-}
-.winner-grid-card.prize-tier-2 .wgc-code-val {
-  color: #dc2626;
-}
-.winner-grid-card.prize-tier-2 .wgc-phone-badge {
-  background: rgba(220, 38, 38, 0.08);
-  color: #991b1b;
+  font-weight: 700;
+  font-size: 0.8rem;
 }
 
-/* 3. GIẢI NHÌ (Đỏ mận sang trọng) */
-.winner-grid-card.prize-tier-3 {
-  border: 1.5px solid #dc2626;
-  box-shadow: 0 5px 18px rgba(220, 38, 38, 0.25);
+/* --- HÀNG 3: CÁC GIẢI BA (Row Third - 6 cột đều đặn) --- */
+.stage-tier-row.row-third {
+  gap: 8px;
 }
-.winner-grid-card.prize-tier-3 .wgc-header {
-  background: linear-gradient(135deg, #6b0000 0%, #b91c1c 60%, #991b1b 100%);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
-}
-.winner-grid-card.prize-tier-3 .wgc-stt-badge {
-  background: linear-gradient(135deg, #dc2626, #991b1b);
-  color: #ffffff;
-}
-.winner-grid-card.prize-tier-3 .wgc-code-box {
-  background: rgba(185, 28, 28, 0.08);
-  border: 1.5px solid rgba(185, 28, 28, 0.3);
-}
-.winner-grid-card.prize-tier-3 .wgc-code-label {
-  color: #991b1b;
-}
-.winner-grid-card.prize-tier-3 .wgc-code-val {
-  color: #b91c1c;
-}
-.winner-grid-card.prize-tier-3 .wgc-phone-badge {
-  background: rgba(185, 28, 28, 0.08);
-  color: #991b1b;
+.stage-tier-row.row-third .stage-award-card {
+  min-height: 80px;
+  padding: 8px 10px;
 }
 
-/* 4. GIẢI BA (Đỏ đồng ấm áp) */
-.winner-grid-card.prize-tier-4 {
-  border: 1.5px solid #b91c1c;
-  box-shadow: 0 5px 18px rgba(185, 28, 28, 0.25);
+/* 🥉 CẤP 4: GIẢI BA (Cam Đồng Lễ Hội) */
+.stage-award-card.tier-4 {
+  border-left: 5px solid #ea580c;
+  border: 1px solid rgba(234, 88, 12, 0.25);
+  border-left-width: 5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
 }
-.winner-grid-card.prize-tier-4 .wgc-header {
-  background: linear-gradient(135deg, #560000 0%, #991b1b 60%, #7f1d1d 100%);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.15);
+.stage-award-card.tier-4 .sac-code {
+  font-size: 1.25rem;
+  color: #b71c1c;
 }
-.winner-grid-card.prize-tier-4 .wgc-stt-badge {
-  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+.stage-award-card.tier-4 .sac-pill-badge {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
   color: #ffffff;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border: 1px solid #ffffff;
 }
-.winner-grid-card.prize-tier-4 .wgc-code-box {
-  background: rgba(153, 27, 27, 0.08);
-  border: 1.5px solid rgba(153, 27, 27, 0.3);
+.stage-award-card.tier-4 .sac-name {
+  font-size: 0.95rem;
+  margin: 3px 0 4px;
 }
-.winner-grid-card.prize-tier-4 .wgc-code-label {
-  color: #7f1d1d;
+.stage-award-card.tier-4 .sac-gift {
+  color: #c2410c;
+  font-weight: 600;
+  font-size: 0.72rem;
 }
-.winner-grid-card.prize-tier-4 .wgc-code-val {
-  color: #991b1b;
-}
-.winner-grid-card.prize-tier-4 .wgc-phone-badge {
-  background: rgba(153, 27, 27, 0.08);
-  color: #7f1d1d;
+.stage-award-card.tier-4 .sac-phone {
+  font-size: 0.72rem;
 }
 
 @media (max-width: 1200px) {
-  .winners-grid-3x4 {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-  }
-}
-@media (max-width: 768px) {
-  .winners-grid-3x4 {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+  .stage-tier-row {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
   }
 }
 
@@ -2772,31 +2739,36 @@ body {
   opacity: 1;
 }
 
-/* --- Panel trái: ảnh nhỏ hơn khi hiển thị 4 giải --- */
+/* --- Panel trái: Thẻ Trắng Sứ Chữ Đỏ khi hiển thị 4 giải tổng kết --- */
 #allPrizesList.four-prizes {
-  gap: 10px;
+  gap: 8px;
+  padding: 4px;
+}
+
+#allPrizesList.four-prizes .all-prize-card {
+  min-height: 120px;
 }
 
 #allPrizesList.four-prizes .apc-img {
-  max-height: 100px;
-  height: 100px;
+  max-height: 68px;
+  height: 68px;
 }
 
 #allPrizesList.four-prizes .apc-prize-name {
-  font-size: 1.25rem !important;
-  padding: 6px 18px !important;
-  letter-spacing: 1px;
+  font-size: 0.8rem !important;
+  padding: 3px 12px !important;
+  letter-spacing: 0.5px;
 }
 
 #allPrizesList.four-prizes .apc-detail {
-  font-size: 0.95rem;
-  padding: 8px 14px 10px;
+  font-size: 0.88rem;
+  padding: 4px 8px 6px;
 }
 
 #allPrizesList.four-prizes .apc-header {
-  padding: 8px 12px;
+  padding: 6px 8px 3px;
 }
 
 #allPrizesList.four-prizes .apc-img-wrap {
-  padding: 10px 10px;
+  padding: 4px 8px;
 }

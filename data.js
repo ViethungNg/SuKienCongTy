@@ -10,13 +10,13 @@ const CONFIG_GIAI_THUONG = {
 };
 const KICH_BAN_QUAY = [
     // --- GIẢI BA (5 giải trong 1 lần bấm quay) ---
-    { prizeId: 4, count: 6, label: "GIẢI BA", presenter: "Mr Long & Mr Kế" },
+    { prizeId: 4, count: 1, label: "GIẢI BA", presenter: "Mr Long & Mr Kế" },
 
     // --- GIẢI NHÌ (2 giải trong 1 lần bấm quay) ---
-    { prizeId: 3, count: 3, label: "GIẢI NHÌ", presenter: "Mr Thành Nam" },
+    { prizeId: 3, count: 1, label: "GIẢI NHÌ", presenter: "Mr Thành Nam" },
 
     // --- GIẢI NHẤT (1 giải trong 1 lần bấm quay) ---
-    { prizeId: 2, count: 2, label: "GIẢI NHẤT", presenter: "Mr Trường" },
+    { prizeId: 2, count: 1, label: "GIẢI NHẤT", presenter: "Mr Trường" },
     // --- GIẢI ĐẶC BIỆT (1 giải trong 1 lần bấm quay) ---
     { prizeId: 1, count: 1, label: "GIẢI ĐẶC BIỆT", presenter: "Mr Trường" }
 ];

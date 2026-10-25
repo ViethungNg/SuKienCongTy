@@ -28,9 +28,8 @@ const LED_CONFIG = {
   RIGHT_WIDTH: 2.000,  // Chiều rộng màn phụ phải (2.000m)
   RIGHT_HEIGHT: 3.456, // Chiều cao màn phụ phải (3.456m)
 
-  // 4. Chiều cao bảng Danh Sách Trúng Giải trên màn LED chính (Mặc định: '55vh' ~ 1/2 đến gần 2/3 màn hình)
-  // Bạn có thể tùy chỉnh: '50vh' (đúng 1 nửa màn), '55vh' (chuẩn đẹp nhất), '66vh' (2/3 màn)
-  SUMMARY_TABLE_MAX_HEIGHT: '58vh',
+  // 4. Chiều cao bảng Danh Sách Trúng Giải trên màn LED chính (Đủ cho 4 hàng phân cấp 16 giải)
+  SUMMARY_TABLE_MAX_HEIGHT: '72vh',
 };
 
 /**

@@ -29,7 +29,7 @@ const LED_CONFIG = {
   RIGHT_HEIGHT: 3.456, // Chiều cao màn phụ phải (3.456m)
 
   // 4. Chiều cao bảng Danh Sách Trúng Giải trên màn LED chính (Đủ cho 4 hàng phân cấp 16 giải)
-  SUMMARY_TABLE_MAX_HEIGHT: '72vh',
+  SUMMARY_TABLE_MAX_HEIGHT: '80vh',
 };
 
 /**

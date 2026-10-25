@@ -2918,8 +2918,8 @@ body {
   padding: 8px 16px 8px !important;
   position: relative !important;
   max-height: calc(100% - 10px) !important;
-  max-width: 960px !important;
-  width: 94% !important;
+  max-width: 1080px !important;
+  width: 100% !important;
   margin: 0 auto !important;
   overflow: hidden !important;
   display: flex !important;

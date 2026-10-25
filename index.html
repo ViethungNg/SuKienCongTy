@@ -1751,31 +1751,68 @@
       return colorMap[prizeId] || 'prize-color-default';
     }
 
+    // ⭐ BÓC TÁCH TÊN KHÁCH HÀNG & MÃ/SỐ ĐIỆN THOẠI (CHUẨN FORM GỌN GÀNG)
+    function parseGuestInfo(rawText) {
+      let text = String(rawText || '').trim();
+      let customerCode = '';
+      let ownerName = text;
+
+      if (text.includes(' - ')) {
+        const parts = text.split(' - ');
+        ownerName = parts[0].trim();
+        customerCode = parts.slice(1).join(' - ').trim();
+      } else if (text.includes(' – ')) {
+        const parts = text.split(' – ');
+        ownerName = parts[0].trim();
+        customerCode = parts.slice(1).join(' – ').trim();
+      }
+
+      // Xóa tiền tố 'CH: ' hoặc 'CH ' cho bảng chủ nhân (để hiển thị gọn gàng)
+      let cleanOwner = ownerName.replace(/^CH\s*[:\.]?\s*/i, '').trim();
+
+      return {
+        raw: text,
+        ownerName: cleanOwner || ownerName,
+        customerCode: customerCode,
+        fullDisplay: text
+      };
+    }
+
     function testShowSummary() {
+      const modal = document.getElementById("finalScreen");
+      if (modal && modal.classList.contains("active")) {
+        modal.classList.remove("active");
+        const audioFinal = document.getElementById("audioFinal");
+        if (audioFinal) audioFinal.pause();
+        const spinBtnWrapper = document.getElementById("spinBtnWrapper");
+        if (spinBtnWrapper) spinBtnWrapper.style.display = "";
+        return;
+      }
+
       if (!allWinners || allWinners.length === 0) {
         allWinners = [
-          // 1 Giải Đặc Biệt (Hàng 1)
-          { prize: 1, code: '006', name: 'CH: Duệ Tuyền ( Anh Toàn ) - xxxxxx2788' },
-          // 2 Giải Nhất (Hàng 1)
-          { prize: 2, code: '077', name: 'CH: Luyện Xíu - xxxxxx9618' },
-          { prize: 2, code: '220', name: 'CH: Phương Anh - xxxxxx0854' },
-          // 3 Giải Nhì (Hàng 2)
-          { prize: 3, code: '280', name: 'CH: Dũng Thanh - xxxxxx7805' },
-          { prize: 3, code: '079', name: 'CH: Quy Ánh - xxxxxx2566' },
-          { prize: 3, code: '217', name: 'CH: Hải vân - xxxxxx2575' },
-          // 6 Giải Ba (Hàng 3) -> TỔNG 12 GIẢI
-          { prize: 4, code: '008', name: 'CH: Lương Thành - xxxxxx8722' },
-          { prize: 4, code: '071', name: 'CH: Luân Hiền - xxxxxx7867' },
-          { prize: 4, code: '059', name: 'CH: Điện Nước TN - xxxxxx8894' },
-          { prize: 4, code: '070', name: 'CH: Vượng Vỹ - xxxxxx5899' },
-          { prize: 4, code: '022', name: 'CH: Huệ Đoàn - xxxxxx9947' },
-          { prize: 4, code: '295', name: 'CH: Huy Hằng - xxxxxx8988' }
+          // 1 Giải Đặc Biệt
+          { prize: 1, code: '072', name: 'CH: Biên Xoan - xxxxxx8918' },
+          // 2 Giải Nhất
+          { prize: 2, code: '080', name: 'CH: Minh Hiếu - xxxxxx5735' },
+          { prize: 2, code: '069', name: 'CH: Hải Mi - xxxxxx7555' },
+          // 3 Giải Nhì
+          { prize: 3, code: '045', name: 'CH: Thúy Hiệp - xxxxxx9688' },
+          { prize: 3, code: '220', name: 'CH: Phương Anh - xxxxxx0854' },
+          { prize: 3, code: '077', name: 'CH: Luyện Xíu - xxxxxx9618' },
+          // 6 Giải Ba
+          { prize: 4, code: '228', name: 'CH: Nam Thắng - xxxxxx5100' },
+          { prize: 4, code: '236', name: 'CH: Dũng Vân - xxxxxx7308' },
+          { prize: 4, code: '294', name: 'CH: Quang Nguyệt - xxxxxx3040' },
+          { prize: 4, code: '224', name: 'CH: Công Thắm - xxxxxx2725' },
+          { prize: 4, code: '217', name: 'CH: Hải vân - xxxxxx2575' },
+          { prize: 4, code: '238', name: 'CH: Hoa Lan - xxxxxx5902' }
         ];
       }
       showSummaryModal("final");
     }
 
-    // ⭐ HÀM HIỂN THỊ TỔNG KẾT – BỐ CỤC PHÂN TẦNG SÂN KHẤU (ĐỒNG BỘ PHONG CÁCH POPUP & LỊCH SỬ)
+    // ⭐ HÀM HIỂN THỊ TỔNG KẾT – BỐ CỤC PHÂN TẦNG SÂN KHẤU (PHONG CÁCH THIẾT KẾ NỀN TRẮNG SỨ SANG TRỌNG)
     function showSummaryModal(type) {
       const modal = document.getElementById("finalScreen");
       const container = document.getElementById("finalTableContainer");
@@ -1794,8 +1831,7 @@
         audioFinal.play().catch(() => {});
       }
 
-      document.getElementById("finalTitleText").innerText = "DANH SÁCH TRÚNG GIẢI";
-
+      // Ẩn nút quay và gợi ý trung gian
       const redrawHint = document.getElementById("redrawHint");
       if (redrawHint) redrawHint.style.display = "none";
 
@@ -1807,174 +1843,206 @@
 
       document.getElementById("finalBtn").setAttribute("data-final", "true");
 
-      // --- Áp dụng container layout phân tầng ---
+      // Cập nhật tiêu đề màn chính với vòng nguyệt quế vàng (Không có câu phụ đề thừa)
+      const finalTitleEl = document.querySelector(".final-title");
+      if (finalTitleEl) {
+        finalTitleEl.innerHTML = `
+          <div class="final-wreath-header">
+            <span class="wreath-leaf left">🌿</span>
+            <div class="final-title-text-group">
+              <h1 class="final-title-main">DANH SÁCH TRÚNG GIẢI</h1>
+            </div>
+            <span class="wreath-leaf right">🌿</span>
+          </div>
+        `;
+      }
+
+      // Khung chứa dạng bảng tổng kết 3 cột
       container.classList.add("three-column-layout");
       table.style.display = "none";
       threeColGrid.style.display = "flex";
       threeColGrid.style.flexDirection = "column";
       threeColGrid.innerHTML = "";
 
-      // Nhóm winners theo prizeId
-      const prizeGroups = {};
+      // Phân nhóm người trúng giải
+      const prizeGroups = { 1: [], 2: [], 3: [], 4: [] };
       allWinners.forEach(w => {
-        if (!prizeGroups[w.prize]) prizeGroups[w.prize] = [];
-        prizeGroups[w.prize].push(w);
+        const p = Number(w.prize) || 4;
+        if (!prizeGroups[p]) prizeGroups[p] = [];
+        prizeGroups[p].push(w);
       });
 
-      // Tạo thẻ giải thưởng đồng bộ phong cách với Popup & Danh Sách Lịch Sử
-      function createAwardCard(w, tierId, delayIdx) {
-        const prizeInfo = CONFIG_GIAI_THUONG[tierId] || {};
-        const prizeName = prizeInfo.name || `GIẢI ${tierId}`;
-        const prizeDetail = prizeInfo.detail || '';
-        const agencyName = (w.name || w.pos || '').trim();
+      // 1. MÀN CHÍNH GIỮA: Render danh sách trúng giải chi tiết 4 cấp giải
+      const subHeader = document.createElement("div");
+      subHeader.className = "stage-summary-sub-header";
+      subHeader.innerHTML = `
+        <div class="sssh-left">
+          <span class="sssh-trophy">🏆</span>
+          <span class="sssh-title">DANH SÁCH TRÚNG GIẢI</span>
+        </div>
+        <div class="sssh-right">
+          Tổng cộng: <strong class="sssh-total-num">${allWinners.length}</strong> giải thưởng
+        </div>
+      `;
+      threeColGrid.appendChild(subHeader);
 
-        let displayName = agencyName;
-        let phoneTag = '';
-        if (agencyName.includes(' - ')) {
-          const parts = agencyName.split(' - ');
-          displayName = parts[0].trim();
-          phoneTag = parts.slice(1).join(' - ').trim();
-        } else if (agencyName.includes(' – ')) {
-          const parts = agencyName.split(' – ');
-          displayName = parts[0].trim();
-          phoneTag = parts.slice(1).join(' – ').trim();
-        }
-
-        const card = document.createElement("div");
-        card.className = `stage-award-card tier-${tierId}`;
-        card.style.animationDelay = `${(delayIdx || 0) * 0.03}s`;
-
-        card.innerHTML = `
-          <div class="sac-top-row">
-            <span class="sac-code">Mã: ${w.code}</span>
-            <span class="sac-pill-badge tier-${tierId}">${prizeName}</span>
-          </div>
-          <div class="sac-name" title="${agencyName}">${displayName}</div>
-          <div class="sac-bottom-row">
-            ${prizeDetail ? `<span class="sac-gift" title="${prizeDetail}">${prizeDetail}</span>` : ''}
-            ${phoneTag ? `<span class="sac-phone">${phoneTag}</span>` : ''}
-          </div>
-        `;
-        return card;
-      }
-
-      const summaryStage = document.createElement("div");
-      summaryStage.className = "summary-stage-grid";
-
-      let animCardIdx = 0;
-
-      // --- HÀNG 1: 1 GIẢI ĐẶC BIỆT + 2 GIẢI NHẤT (Trải từ trái qua phải) ---
-      const row1Winners = [
-        ...(prizeGroups[1] || []),
-        ...(prizeGroups[2] || [])
+      // 1. MÀN CHÍNH GIỮA: Master Table hợp nhất (Rowspan chuẩn, căn giữa hoàn hảo, không lặp header, không bao giờ đè dòng)
+      const tierConfigs = [
+        { prizeId: 1, label: "GIẢI ĐẶC BIỆT", pillText: "01 Giải", pillClass: "tier-1", img: "img/giaidacbiet.png", defaultProduct: "Máy lọc nước Toshiba H2396" },
+        { prizeId: 2, label: "GIẢI NHẤT", pillText: "02 Giải", pillClass: "tier-2", img: "img/giai1.png", defaultProduct: "Máy hàn nhiệt" },
+        { prizeId: 3, label: "GIẢI NHÌ", pillText: "03 Giải", pillClass: "tier-3", img: "img/giai2.png", defaultProduct: "Nồi chiên không dầu Kungfu" },
+        { prizeId: 4, label: "GIẢI BA", pillText: "06 Giải", pillClass: "tier-4", img: "img/giai3.png", defaultProduct: "Lẩu nướng đa năng 2in1 - 7826" }
       ];
-      if (row1Winners.length > 0) {
-        const row1 = document.createElement("div");
-        row1.className = "stage-tier-row row-hero";
-        row1.style.gridTemplateColumns = `repeat(${row1Winners.length}, 1fr)`;
-        row1Winners.forEach(w => {
-          animCardIdx++;
-          row1.appendChild(createAwardCard(w, w.prize, animCardIdx));
-        });
-        summaryStage.appendChild(row1);
-      }
 
-      // --- HÀNG 2: CÁC GIẢI NHÌ (Trải đều từ trái qua phải) ---
-      const row2Winners = prizeGroups[3] || [];
-      if (row2Winners.length > 0) {
-        const row2 = document.createElement("div");
-        row2.className = "stage-tier-row row-second";
-        row2.style.gridTemplateColumns = `repeat(${row2Winners.length}, 1fr)`;
-        row2Winners.forEach(w => {
-          animCardIdx++;
-          row2.appendChild(createAwardCard(w, w.prize, animCardIdx));
-        });
-        summaryStage.appendChild(row2);
-      }
+      const tableWrap = document.createElement("div");
+      tableWrap.className = "summary-master-table-wrap";
 
-      // --- HÀNG 3 & 4: CÁC GIẢI BA (Trải đều từ trái qua phải) ---
-      const row3AndBeyond = [
-        ...(prizeGroups[4] || []),
-        ...(prizeGroups[5] || [])
-      ];
-      if (row3AndBeyond.length > 0) {
-        if (row3AndBeyond.length <= 6) {
-          const row3 = document.createElement("div");
-          row3.className = "stage-tier-row row-third";
-          row3.style.gridTemplateColumns = `repeat(${row3AndBeyond.length}, 1fr)`;
-          row3AndBeyond.forEach(w => {
-            animCardIdx++;
-            row3.appendChild(createAwardCard(w, w.prize, animCardIdx));
+      let tbodyRowsHtml = "";
+
+      tierConfigs.forEach((tc) => {
+        const listInTier = prizeGroups[tc.prizeId] || [];
+        const count = listInTier.length;
+        const displayPill = count > 0 ? `${String(count).padStart(2, '0')} Giải` : tc.pillText;
+        const rowSpan = Math.max(count, 1);
+
+        if (count > 0) {
+          listInTier.forEach((w, rowIdx) => {
+            const rawGuestName = (w.name || w.pos || '').trim();
+            const codeStr = String(w.code).padStart(3, '0');
+            const isFirst = rowIdx === 0;
+
+            tbodyRowsHtml += `
+              <tr class="${isFirst ? 'tier-boundary-row' : ''}">
+                ${isFirst ? `
+                  <td rowspan="${rowSpan}" class="smt-prize-cell tier-${tc.prizeId}">
+                    <div class="smt-prize-name">${tc.label}</div>
+                    <span class="smt-prize-pill ${tc.pillClass}">${displayPill}</span>
+                  </td>
+                ` : ''}
+                <td class="smt-code-cell">${codeStr}</td>
+                <td class="smt-name-cell" title="${rawGuestName}">${rawGuestName}</td>
+              </tr>
+            `;
           });
-          summaryStage.appendChild(row3);
         } else {
-          // Chia đôi thành 2 hàng cân đối (VD: 10 giải = Hàng 3 có 5 giải, Hàng 4 có 5 giải)
-          const mid = Math.ceil(row3AndBeyond.length / 2);
-          const part1 = row3AndBeyond.slice(0, mid);
-          const part2 = row3AndBeyond.slice(mid);
-
-          const row3A = document.createElement("div");
-          row3A.className = "stage-tier-row row-third";
-          row3A.style.gridTemplateColumns = `repeat(${part1.length}, 1fr)`;
-          part1.forEach(w => {
-            animCardIdx++;
-            row3A.appendChild(createAwardCard(w, w.prize, animCardIdx));
-          });
-          summaryStage.appendChild(row3A);
-
-          const row3B = document.createElement("div");
-          row3B.className = "stage-tier-row row-third";
-          row3B.style.gridTemplateColumns = `repeat(${part2.length}, 1fr)`;
-          part2.forEach(w => {
-            animCardIdx++;
-            row3B.appendChild(createAwardCard(w, w.prize, animCardIdx));
-          });
-          summaryStage.appendChild(row3B);
+          tbodyRowsHtml += `
+            <tr class="tier-boundary-row">
+              <td class="smt-prize-cell tier-${tc.prizeId}">
+                <div class="smt-prize-name">${tc.label}</div>
+                <span class="smt-prize-pill ${tc.pillClass}">${displayPill}</span>
+              </td>
+              <td colspan="2" class="smt-empty-cell">Chưa có khách hàng trúng giải</td>
+            </tr>
+          `;
         }
+      });
+
+      tableWrap.innerHTML = `
+        <table class="summary-master-table">
+          <thead>
+            <tr>
+              <th style="width: 26%; text-align: center;">GIẢI THƯỞNG</th>
+              <th style="width: 20%; text-align: center;">MÃ SỐ</th>
+              <th style="width: 54%; text-align: center;">TÊN CỬA HÀNG / KHÁCH HÀNG</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tbodyRowsHtml}
+          </tbody>
+        </table>
+      `;
+
+      threeColGrid.appendChild(tableWrap);
+
+      // Thêm dải ruy băng vàng trang trí góc dưới
+      let existingRibbon = container.querySelector(".stb-ribbon-decor");
+      if (!existingRibbon) {
+        const ribbonDecor = document.createElement("div");
+        ribbonDecor.className = "stb-ribbon-decor";
+        ribbonDecor.innerHTML = `
+          <svg viewBox="0 0 160 80" width="85" height="42">
+            <path d="M10,75 C40,75 50,45 80,45 C110,45 120,20 150,15 C130,35 100,55 70,55 C40,55 30,70 10,75 Z" fill="url(#stbGoldGrad)"/>
+            <defs>
+              <linearGradient id="stbGoldGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fff5aa"/>
+                <stop offset="50%" stop-color="#eab308"/>
+                <stop offset="100%" stop-color="#ca8a04"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        `;
+        container.appendChild(ribbonDecor);
       }
 
-      threeColGrid.appendChild(summaryStage);
       modal.classList.add("active");
 
-      if (type === "final") {
-        // Pháo hoa
-        launchCelebrationFireworks(3000);
+      // Pháo hoa chào mừng
+      launchCelebrationFireworks(3500);
 
-        // Panel trái: hiển thị TẤT CẢ 4 giải (bao gồm Giải Đặc Biệt)
-        document.getElementById("singlePrizeView").style.display = "none";
-        document.getElementById("allPrizesView").style.display = "flex";
+      // 2. MÀN TRÁI (prize-panel): Hiển thị 4 thẻ quà tặng nền trắng sứ
+      document.getElementById("singlePrizeView").style.display = "none";
+      const allPrizesView = document.getElementById("allPrizesView");
+      allPrizesView.style.display = "flex";
 
-        const allPrizesList = document.getElementById("allPrizesList");
-        allPrizesList.innerHTML = "";
-        allPrizesList.classList.add("four-prizes"); // chế độ compact 4 giải
+      const allPrizesList = document.getElementById("allPrizesList");
+      allPrizesList.innerHTML = "";
 
-        const displayPrizeIds = [1, 2, 3, 4];
-        displayPrizeIds.forEach(prizeId => {
-          if (!CONFIG_GIAI_THUONG[prizeId]) return;
-          // Chỉ hiển thị nếu có người trúng
-          if (!prizeGroups[prizeId] || prizeGroups[prizeId].length === 0) return;
+      tierConfigs.forEach(tc => {
+        const prizeConf = CONFIG_GIAI_THUONG[tc.prizeId] || {};
+        const productName = prizeConf.detail || tc.defaultProduct;
+        const countStr = prizeConf.count ? `${String(prizeConf.count).padStart(2, '0')} GIẢI` : tc.pillText;
+        const imgSrc = prizeConf.img || tc.img;
 
-          const prize = CONFIG_GIAI_THUONG[prizeId];
-          const colorClass = getPrizeColorClass(prizeId);
-
-          const groupDiv = document.createElement("div");
-          groupDiv.className = `all-prize-card prize-tier-${prizeId}`;
-
-          groupDiv.innerHTML = `
-            <div class="apc-header">
-              <span class="apc-prize-name tier-${prizeId}">${prize.name}</span>
+        const card = document.createElement("div");
+        card.className = `modern-prize-card tier-${tc.prizeId}`;
+        card.innerHTML = `
+          <div class="mpc-header">
+            <span class="mpc-badge tier-${tc.prizeId}">${tc.label}</span>
+            <span class="mpc-count">${countStr}</span>
+          </div>
+          <div class="mpc-body">
+            <div class="mpc-img-box">
+              <img src="${imgSrc}" alt="${tc.label}" onerror="if(this.src.endsWith('.png'))this.src=this.src.replace('.png','.jpg');" />
             </div>
-            <div class="apc-img-wrap">
-              <img class="apc-img" src="${prize.img || `img/giai${prizeId}.png`}"
-                onerror="if(this.src.endsWith('.png')){this.src=this.src.replace('.png','.jpg');}else if(this.src.endsWith('.jpg')){this.src=this.src.replace('.jpg','.png');}else{this.parentElement.style.display='none';}"
-                alt="${prize.name}" />
-            </div>
-            <div class="apc-detail">${prize.detail}</div>
-          `;
+            <div class="mpc-name">${productName}</div>
+          </div>
+        `;
+        allPrizesList.appendChild(card);
+      });
 
-          allPrizesList.appendChild(groupDiv);
-        });
-      }
+      // 3. MÀN PHẢI (sidebar): Hiển thị timeline danh sách trúng giải (Gọn gàng, dùng nguyên chuỗi DB, không #1, #2)
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = "";
+
+      const sortedWinners = [
+        ...(prizeGroups[1] || []),
+        ...(prizeGroups[2] || []),
+        ...(prizeGroups[3] || []),
+        ...(prizeGroups[4] || [])
+      ];
+
+      sortedWinners.forEach(w => {
+        const rawGuestName = (w.name || w.pos || '').trim();
+        const codeStr = String(w.code).padStart(3, '0');
+        const prizeId = Number(w.prize) || 4;
+        const prizeName = (typeof CONFIG_GIAI_THUONG !== 'undefined' && CONFIG_GIAI_THUONG[prizeId])
+          ? CONFIG_GIAI_THUONG[prizeId].name
+          : `GIẢI ${prizeId}`;
+
+        const item = document.createElement("div");
+        item.className = "modern-timeline-item";
+        item.innerHTML = `
+          <div class="mti-info">
+            <div class="mti-code-line">
+              <span class="mti-label">Mã:</span>
+              <strong class="mti-code-val">${codeStr}</strong>
+            </div>
+            <div class="mti-guest" title="${rawGuestName}">${rawGuestName}</div>
+          </div>
+          <span class="mti-badge tier-${prizeId}">${prizeName}</span>
+        `;
+        historyList.appendChild(item);
+      });
     }
 
     function exportToPDF() {
